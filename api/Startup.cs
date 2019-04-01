@@ -23,9 +23,23 @@ namespace header_navigation
 
         public IConfiguration Configuration { get; }
 
+        readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+ {
+     options.AddPolicy(MyAllowSpecificOrigins,
+     builder =>
+     {
+         builder.WithOrigins("http://localhost:4200")
+                             .AllowAnyHeader()
+                             .AllowAnyMethod()
+                             .WithExposedHeaders("Link");
+     });
+ });
+
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddSwaggerGen(c =>
@@ -46,6 +60,7 @@ namespace header_navigation
                 // app.UseHsts();
             }
 
+            app.UseCors(MyAllowSpecificOrigins);
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
 
