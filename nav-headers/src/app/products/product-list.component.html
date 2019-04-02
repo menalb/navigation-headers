@@ -19,17 +19,21 @@
 <div>
   <nav aria-label="Page navigation">
     <ul class="pagination justify-content-center">
-      <li class="page-item" [ngClass]="{ 'disabled': !hasPrev }">
+      <li
+        class="page-item"
+        [ngClass]="{ disabled: !hasPrev }"
+        (click)="first()"
+      >
         <a class="page-link" href="#" tabindex="-1">First</a>
       </li>
-      <li class="page-item" [ngClass]="{ 'disabled': !hasPrev }" (click)="prev()">
-          <a class="page-link" href="#">Previous</a>
-        </li>
-      <li class="page-item" [ngClass]="{ 'disabled': !hasNext }" (click)="next()">
-          <a class="page-link" href="#">Next</a>
-        </li>
-      <li class="page-item">
-        <a class="page-link" [ngClass]="{ 'disabled': !hasNext }" href="#">Last</a>
+      <li class="page-item" [ngClass]="{ disabled: !hasPrev }" (click)="prev()">
+        <a class="page-link" href="#">Previous</a>
+      </li>
+      <li class="page-item" [ngClass]="{ disabled: !hasNext }" (click)="next()">
+        <a class="page-link" href="#">Next</a>
+      </li>
+      <li class="page-item" [ngClass]="{ disabled: !hasNext }">
+        <a class="page-link" (click)="last()" href="#">Last</a>
       </li>
     </ul>
   </nav>

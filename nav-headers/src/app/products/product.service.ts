@@ -6,15 +6,16 @@ import { catchError, map } from "rxjs/operators";
 @Injectable()
 export class ProductService {
   constructor(private http: HttpClient) {}
+  baseUrl: string = "https://localhost:5001";
 
   get(): Observable<Product[]> {
-    const url = "https://localhost:5001/api/products?page=1&pageSize=5";
+    const url = "/api/products?page=1&pageSize=5";
     return this.getFromService(url);
   }
 
   getFromService(url: string) {
     return this.http
-      .get<Product[]>(url, {
+      .get<Product[]>(this.baseUrl + url, {
         observe: "response",
         headers: new HttpHeaders({ Accept: "application/json" })
       })
@@ -22,7 +23,6 @@ export class ProductService {
         map(resp => {
           if (resp.headers && resp.headers.has("Link")) {
             let links = this.parse_link_header(resp.headers.get("Link"));
-            console.log(links)
             this.firt = links["first"];
             this.last = links["last"];
             this.next = links["next"];
@@ -55,6 +55,12 @@ export class ProductService {
   }
   movePrev(): Observable<Product[]> {
     return this.getFromService(this.prev);
+  }
+  moveLast(): Observable<Product[]> {
+    return this.getFromService(this.last);
+  }
+  moveFirst(): Observable<Product[]> {
+    return this.getFromService(this.firt);
   }
 
   firt?: string;
