@@ -38,16 +38,16 @@ namespace header_navigation.Controllers
             var baseUrl = (Url.RouteUrl("GetProducts", new { }));
             if (currentPage != pagesCount)
             {
-                sb.Append($"<{baseUrl}?page={currentPage + 1}&pageSize={pageSize}>; rel='next',");
-                sb.Append($"<{baseUrl}?page={1}>; rel='first',");
+                sb.Append($"<{baseUrl}?page={currentPage + 1}&pageSize={pageSize}>; rel=\"next\",");
+                sb.Append($"<{baseUrl}?page={1}>; rel=\"first\",");
             }
             if (currentPage != 1)
             {
-                sb.Append($"<{baseUrl}?page={currentPage - 1}>; rel='next',");
+                sb.Append($"<{baseUrl}?page={currentPage - 1}>; rel=\"next\",");
             }
             if (currentPage != pagesCount)
             {
-                sb.Append($"<{baseUrl}?page={pagesCount}>; rel='last',");
+                sb.Append($"<{baseUrl}?page={pagesCount}>; rel=\"last\",");
             }
             return sb.ToString().TrimEnd(',');
         }
