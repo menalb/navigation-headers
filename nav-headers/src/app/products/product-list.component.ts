@@ -1,5 +1,7 @@
-import { Component, OnInit } from "@angular/core";
-import { ProductService, Product } from "./product.service";
+import { Component, OnInit, Input } from "@angular/core";
+import { ProductService } from "./product.service";
+import { Product, ApiConfig } from "./product.model";
+import { Observable } from "rxjs";
 
 @Component({
   selector: "product-list",
@@ -7,57 +9,37 @@ import { ProductService, Product } from "./product.service";
 })
 export class ProductListComponent implements OnInit {
   constructor(private productService: ProductService) {}
+  @Input() gridConfiguration: ApiConfig;
   products: Product[];
+  hasNext: boolean;
+  hasPrev: boolean;
 
   ngOnInit() {
-    this.productService
-      .get()
-      .subscribe(
-        resp => this.handleNavigation(resp),
-        error => console.log(error)
-      );
+    this.withNav(this.productService.get(this.gridConfiguration));
   }
-
   next() {
     if (this.productService.hasNext())
-      this.productService
-        .moveNext()
-        .subscribe(
-          resp => this.handleNavigation(resp),
-          error => console.log(error)
-        );
+      this.withNav(this.productService.moveNext());
   }
   prev() {
     if (this.productService.hasPrev())
-      this.productService
-        .movePrev()
-        .subscribe(
-          resp => this.handleNavigation(resp),
-          error => console.log(error)
-        );
+      this.withNav(this.productService.movePrev());
   }
   last() {
     if (this.productService.hasNext())
-      this.productService
-        .moveLast()
-        .subscribe(
-          resp => this.handleNavigation(resp),
-          error => console.log(error)
-        );
+      this.withNav(this.productService.moveLast());
   }
-
   first() {
-    if (this.productService.hasPrev())
-      this.productService
-        .moveFirst()
-        .subscribe(
-          resp => this.handleNavigation(resp),
-          error => console.log(error)
-        );
+    this.withNav(this.productService.moveFirst());
   }
 
-  hasNext: boolean;
-  hasPrev: boolean;
+  private withNav(next: Observable<Product[]>) {
+    next.subscribe(
+      resp => this.handleNavigation(resp),
+      error => console.log(error)
+    );
+  }
+
   private handleNavigation(resp: Product[]) {
     this.products = resp;
     this.hasNext = this.productService.hasNext();

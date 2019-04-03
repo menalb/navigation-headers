@@ -2,15 +2,16 @@ import { Injectable } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable, of } from "rxjs";
 import { catchError, map } from "rxjs/operators";
+import { Product, ApiConfig } from "./product.model";
 
 @Injectable()
 export class ProductService {
   constructor(private http: HttpClient) {}
-  baseUrl: string = "https://localhost:5001";
+  private baseUrl: string;
 
-  get(): Observable<Product[]> {
-    const url = "/api/products?page=1&pageSize=5";
-    return this.getFromService(url);
+  get(config: ApiConfig): Observable<Product[]> {
+    this.baseUrl = config.baseUrl;
+    return this.getFromService(config.endpoint);
   }
 
   getFromService(url: string) {
@@ -21,20 +22,22 @@ export class ProductService {
       })
       .pipe(
         map(resp => {
-          if (resp.headers && resp.headers.has("Link")) {
-            let links = this.parse_link_header(resp.headers.get("Link"));
-            this.firt = links["first"];
-            this.last = links["last"];
-            this.next = links["next"];
-            this.prev = links["prev"];
-          }
+          if (resp.headers && resp.headers.has("Link"))
+            this.build_likns(resp.headers.get("Link"));
+
           return resp.body;
         }),
         catchError(this.handleError<Product[]>("GetProducts"))
       );
   }
-
-  parse_link_header(header) {
+  build_likns(header: string) {
+    let links = this.parse_link_header(header);
+    this.firt = links["first"];
+    this.last = links["last"];
+    this.next = links["next"];
+    this.prev = links["prev"];
+  }
+  parse_link_header(header: string) {
     if (header.length == 0) {
       return;
     }
@@ -75,15 +78,8 @@ export class ProductService {
 
   private handleError<T>(operation = "operation", result?: T) {
     return (error: any): Observable<T> => {
-      console.error(error);
+      console.error(operation, error);
       return of(result as T);
     };
   }
-}
-
-export interface Product {
-  id: number;
-  code: string;
-  name: string;
-  description: string;
 }
