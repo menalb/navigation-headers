@@ -14,25 +14,44 @@ namespace header_navigation.Products
         [HttpGet(Name = "GetProducts")]
         public ActionResult<IEnumerable<Product>> Get(int? page = 1, int? pageSize = 5)
         {
-            var links = BuildLinks(page.Value, pageSize.Value, Products.Count());
-            Response.Headers.Add("Link", links);
-            return Ok(Products.Skip((page.Value - 1) * pageSize.Value).Take(pageSize.Value));
+            return OkWithLinksHeader(
+                Products.Skip((page.Value - 1) * pageSize.Value).Take(pageSize.Value),
+                "GetProducts",
+                new PaginationInfo(page.Value, pageSize.Value, Products.Count())
+                );
         }
 
-        private string BuildLinks(int currentPage, int pageSize, int itemsCount)
+        private ActionResult OkWithLinksHeader<T>(T content, string actionName, PaginationInfo paginationInfo)
         {
-            var pagesCount = Math.Ceiling((double)itemsCount / pageSize);
-            var sb = new StringBuilder();
-            var baseUrl = (Url.RouteUrl("GetProducts", new { }));
-            if (currentPage != pagesCount)
+            var links = BuildLinks(paginationInfo, Url.RouteUrl(actionName, new { }));
+            Response.Headers.Add("Link", links);
+            return Ok(content);
+        }
+        public class PaginationInfo
+        {
+            public PaginationInfo(int currentPage, int pageSize, int itemsCount)
             {
-                sb.Append(BuildLink(baseUrl, currentPage + 1, pageSize, "next"));
-                sb.Append(BuildLink(baseUrl, (int)pagesCount, pageSize, "last"));
+                CurrentPage = currentPage;
+                PageSize = pageSize;
+                ItemsCount = itemsCount;
             }
-            if (currentPage != 1)
+            public int CurrentPage { get; }
+            public int PageSize { get; }
+            public int ItemsCount { get; }
+        }
+        private string BuildLinks(PaginationInfo paginationInfo, string actionLink)
+        {
+            var pagesCount = (int)Math.Ceiling((double)paginationInfo.ItemsCount / paginationInfo.PageSize);
+            var sb = new StringBuilder();
+            if (paginationInfo.CurrentPage != pagesCount)
             {
-                sb.Append(BuildLink(baseUrl, currentPage - 1, pageSize, "prev"));
-                sb.Append(BuildLink(baseUrl, 1, pageSize, "first"));
+                sb.Append(BuildLink(actionLink, paginationInfo.CurrentPage + 1, paginationInfo.PageSize, "next"));
+                sb.Append(BuildLink(actionLink, pagesCount, paginationInfo.PageSize, "last"));
+            }
+            if (paginationInfo.CurrentPage != 1)
+            {
+                sb.Append(BuildLink(actionLink, paginationInfo.CurrentPage - 1, paginationInfo.PageSize, "prev"));
+                sb.Append(BuildLink(actionLink, 1, paginationInfo.PageSize, "first"));
             }
             return sb.ToString().TrimEnd(',');
         }
