@@ -23,14 +23,14 @@ export class ProductService {
       .pipe(
         map(resp => {
           if (resp.headers && resp.headers.has("Link"))
-            this.build_likns(resp.headers.get("Link"));
+            this.build_links(resp.headers.get("Link"));
 
           return resp.body;
         }),
         catchError(this.handleError<Product[]>("GetProducts"))
       );
   }
-  build_likns(header: string) {
+  build_links(header: string) {
     let links = this.parse_link_header(header);
     this.firt = links["first"];
     this.last = links["last"];
