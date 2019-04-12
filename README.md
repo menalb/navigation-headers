@@ -4,7 +4,7 @@ This repo is just a demo on how to implement resources navigation using the [Lin
 
 A very popular scenario is to display on the screen a table with navigation buttons.
 
-In the source code, there is a web api (`/api`) and an Angular app (`nav-header`).
+In the source code, there is a web api (`/api`) and an Angular app (`/nav-header`).
 
 ## API
 This is a very basic REST api that provides an edpoint to GET a list of products
