@@ -1,0 +1,18 @@
+<button type="button" class="btn btn-primary" (click)="showAddForm()">Add</button>
+<div class="card text-center" style="width: 18rem;" [hidden]="!isAddMode">
+  <div class="card-body">
+    <h5 class="card-title">Add New Product</h5>
+    <form [formGroup]="productForm">
+      <p class="card-text">
+        <input type="text" formControlName="name">
+      </p>
+      <p [hidden]="errorMessage.length === 0" class="text-danger">
+        {{errorMessage}}
+      </p>
+      <div class="d-flex justify-content-around">
+        <a href="#" class="btn btn-primary" (click)=cancel()>Cancel</a>
+        <a href="#" class="btn btn-primary" (click)=add($event)>Add</a>
+      </div>
+    </form>
+  </div>
+</div>

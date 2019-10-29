@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ProductService } from './products/product.service';
+import { ProductService } from './product.service';
 
 @Component({
   selector: 'app-root',
@@ -8,14 +8,8 @@ import { ProductService } from './products/product.service';
 })
 export class AppComponent {
   title = 'nav-headers';
-  constructor(private productService: ProductService) {
+  constructor() {
 
   }
-  add(ev) {
-    this.productService.add({
-      code: '123',
-      id: 123,
-      name: 'Foo'
-    }).subscribe(x => x);
-  }
+
 }

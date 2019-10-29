@@ -4,6 +4,10 @@ export interface Product {
   name: string;
 }
 
+export interface AddProductCommand {
+  name: string;
+}
+
 export interface ApiConfig {
   baseUrl: string;
   endpoint: string;

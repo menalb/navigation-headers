@@ -2,8 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { Product, ApiConfig } from './product.model';
+import { Product, ApiConfig, AddProductCommand } from './product.model';
 import { environment } from 'src/environments/environment';
+
+export interface OperationResult {
+  type: 'success' | 'failure';
+  code?: 'invalid' | 'duplicate' | 'ok' | 'ko';
+  message?: string;
+}
 
 @Injectable()
 export class ProductService {
@@ -21,12 +27,42 @@ export class ProductService {
     return new HttpHeaders({ 'Content-Type': 'application/json' });
   }
 
-  add(product: Product): Observable<boolean> {
+  add(product: AddProductCommand): Observable<OperationResult> {
     return this.http.post<Product>(this.config.baseUrl + this.config.endpoint, product, { headers: this.buildHeaders() })
       .pipe(
-        map(_ => true),
-        catchError(this.handleError('AddProduct', false))
+        map(_ => this.success()),
+        catchError(this.handleOperationError('AddProduct'))
       );
+  }
+
+  private handleOperationError(operation = 'operation'): (error: any) => Observable<OperationResult> {
+    return (error: any): Observable<OperationResult> => {
+
+      return of(this.buildResult(operation, error));
+    };
+  }
+
+  private buildResult(operation: string, error: any): OperationResult {
+    switch (error.status) {
+      case 400: return { ...this.failure('failed'), code: 'invalid' };
+      case 409: return { ...this.failure('failed'), code: 'duplicate' };
+    }
+    return { ...this.failure(`${operation} failed`), code: 'ko' }
+  }
+
+  private handleError<T>(operation = 'operation', result?: T) {
+    return (error: any): Observable<T> => {
+      console.error(operation, error);
+      return of(result as T);
+    };
+  }
+
+  success = (): OperationResult => {
+    return { type: 'success', code: 'ok' };
+  }
+
+  failure = (errorMessage: string): OperationResult => {
+    return { type: 'failure', message: errorMessage, code: 'ko' };
   }
 
   get(): Observable<Product[]> {
@@ -96,10 +132,5 @@ export class ProductService {
   hasFirst = () => (this.firt ? true : false);
   hasLast = () => (this.last ? true : false);
 
-  private handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-      console.error(operation, error);
-      return of(result as T);
-    };
-  }
+
 }
