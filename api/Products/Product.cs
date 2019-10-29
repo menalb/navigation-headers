@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Linq;
+
 namespace header_navigation.Products
 {
     public class Product
@@ -5,6 +8,143 @@ namespace header_navigation.Products
         public int Id { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
-        public string Description { get; set; }
+    }
+    internal static class Products
+    {
+        private static IEnumerable<Product> products;
+        public static IEnumerable<Product> GetAll()
+        {
+            return products;
+        }
+        public static void InitProducts()
+        {
+            products = pastas.Select((p, i) => new Product
+            {
+                Id = i,
+                Name = p,
+                Code = $"P{i.ToString("0000")}"
+            });
+        }
+        private static string[] pastas = new string[]{
+            "AGNOLINI",
+"ANELLI LISCI",
+"ANELLI RIGATI",
+"ARMELLETTE",
+"AVEMARIE",
+"BALLERINE",
+"BARBINA",
+"BOCCOLOTTI",
+"BUCATINI",
+"CAMPANELLE",
+"CANNELLONI",
+"CANNERONI",
+"MEZZI CANNERONI LISCI",
+"CANNOLICCHI",
+"CAPELLI D'ANGELO",
+"CAPELLINI",
+"CAPPELLETTI",
+"CASERECCIA",
+"CAVATAPPI",
+"CELLENTANI",
+"CHIFFERI",
+"CHITARRA",
+"CONCHIGLIE",
+"CONCHIGLIETTE",
+"CONCHIGLIONI",
+"CRESTE",
+"CRESTE DI GALLO",
+"CUBETTI",
+"DISCHI VOLANTI",
+"ELICHE VERDI",
+"ELICHE TRICOLORI",
+"FAGOTTINI",
+"FARFALLE",
+"FARFALLINE",
+"FARFALLE TONDE",
+"FESTONATI",
+"FETTUCCE",
+"FETTUCCINE",
+"FILINI",
+"FUSILLI",
+"GARGANELLI",
+"GEMELLI",
+"GENOVESINI RIGATI",
+"GHIOTTOLE",
+"GIGLI",
+"GNOCCHETTI SARDI",
+"GNOCCHI",
+"GOMITI",
+"LASAGNE",
+"LASAGNE ONDULATE",
+"LASAGNE VERDI",
+"LINGUETTINE",
+"LINGUINE",
+"LUMACHE",
+"LUMACONI GIGANTI",
+"LUMACONI RIGATI",
+"MACCHERONI",
+"MACCHERONI RIGATI",
+"MACCHERONCINI",
+"MAFALDE",
+"MEZZELUNE",
+"MEZZEMANI",
+"MILLERIGHE",
+"MISTA",
+"MEZZE PENNE RIGATE",
+"NIDI DI CAPELLINI",
+"NIDI DI FETTUCCINE",
+"NIDI DI PAPPARDELLE",
+"OCCHI DI PERNICE",
+"ONDINE",
+"ORECCHIETTE",
+"ORECCHIETTE TRICOLORE",
+"ORZO",
+"PAGLIA E FIENO",
+"PANZEROTTO",
+"PAPPARDELLE",
+"PENNE LISCE",
+"PENNE A CANDELA",
+"PENNONI RIGATI",
+"PEPE BUCATO",
+"PERCIATI",
+"PERLINE",
+"PIOMBI",
+"QUADRUCCI",
+"RACCHETTE",
+"RADIATORI",
+"RAVIOLI",
+"RAVIOLONI",
+"REGINA",
+"RIGATONI",
+"RISONE",
+"ROCCHETTI",
+"RUOTE",
+"SEMI DI MELONE",
+"SIGARETTE",
+"SPAGHETTI",
+"SPAGHETTINI",
+"STELLETTE",
+"STELLINE",
+"STROZZAPRETI",
+"TAGLIATELLE",
+"TAGLIATELLE SPIANATE",
+"TAGLIOLINE",
+"TAGLIATELLE ZIGRINATE",
+"TEMPESTINA",
+"TOFE TRICOLORE",
+"TORTELLINO",
+"TORTIGLIONE",
+"TORTIGLIONI",
+"TRIPOLINE",
+"TROTTOLE",
+"TRUCCIOLO",
+"TUBETTI",
+"TUFOLI",
+"VERMICELLI",
+"ZITELLINI",
+"ZITI",
+"ZITI TAGLIATI",
+"ZITONI"
+        };
     }
 }

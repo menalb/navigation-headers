@@ -1,15 +1,21 @@
-import { Component } from "@angular/core";
-import { ApiConfig } from "./products/product.model";
+import { Component } from '@angular/core';
+import { ProductService } from './products/product.service';
 
 @Component({
-  selector: "app-root",
-  templateUrl: "./app.component.html",
-  styleUrls: ["./app.component.css"]
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = "nav-headers";
-  apiConfig: ApiConfig = {
-    baseUrl: "https://localhost:5001",
-    endpoint: "/api/products?page=1&pageSize=5"
-  };
+  title = 'nav-headers';
+  constructor(private productService: ProductService) {
+
+  }
+  add(ev) {
+    this.productService.add({
+      code: '123',
+      id: 123,
+      name: 'Foo'
+    }).subscribe(x => x);
+  }
 }

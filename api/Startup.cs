@@ -66,6 +66,8 @@ namespace header_navigation
 
             app.UseHttpsRedirection();
             app.UseMvc();
+
+            Products.Products.InitProducts();
         }
     }
 }
