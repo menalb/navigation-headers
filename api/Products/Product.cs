@@ -16,7 +16,7 @@ namespace header_navigation.Products
         private static IList<Product> products;
         public static IEnumerable<Product> GetAll()
         {
-            return products;
+            return products.OrderBy(p=>p.Name);
         }
 
         public static void Add(Product product)
