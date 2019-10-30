@@ -24,8 +24,17 @@ namespace header_navigation.Products
         [HttpPost(Name = "AddProduct")]
         public ActionResult Add(Product product)
         {
-            Console.WriteLine(product);
-            return BadRequest();
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            if (CheckDuplicate(product.Name))
+                return Conflict();
+            Products.Add(product);
+            return Ok();
+        }
+
+        private bool CheckDuplicate(string productName)
+        {
+            return Products.GetAll().Any(p => p.Name.Equals(productName, StringComparison.InvariantCultureIgnoreCase));
         }
         private ActionResult OkWithLinksHeader<T>(T content, string actionName, PaginationInfo paginationInfo)
         {

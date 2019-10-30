@@ -4,7 +4,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { environment } from 'src/environments/environment';
-import { Product } from '../products/product.model';
+import { Product } from '../product.model';
 
 @Injectable()
 export class SimpleProductService {
