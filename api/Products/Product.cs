@@ -31,13 +31,19 @@ namespace header_navigation.Products
             var prod = products.Single(p => p.Id == id);
             prod.Name = product.Name;
         }
+
+        public static void Delete(int id)
+        {
+            var prod = products.Single(p => p.Id == id);
+            products.Remove(prod);
+        }
         public static void InitProducts()
         {
             products = pastas.Select((p, i) => new Product
             {
-                Id = i,
+                Id = i+1,
                 Name = p,
-                Code = $"P{i.ToString("0000")}"
+                Code = $"P{(i+1).ToString("0000")}"
             }).ToList();
         }
 

@@ -41,6 +41,15 @@ export class SimpleProductBoxComponent implements OnInit {
       this.handleEditResponse(response);
     });
   }
+
+  delete(ev) {
+    ev.stopPropagation();
+    const updatedProduct = { ...this.product, name: this.productForm.value.name };
+    this.productService.delete(updatedProduct).subscribe(response => {
+      this.handleEditResponse(response);
+    });
+  }
+
   cancel(ev) {
     this.isEditMode = false;
     ev.stopPropagation();

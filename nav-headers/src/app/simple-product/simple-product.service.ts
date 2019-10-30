@@ -67,6 +67,19 @@ export class SimpleProductService {
       );
   }
 
+  delete(product: Product): Observable<SimpleOperationResult> {
+    return this.http.delete(
+      `${environment.productsUrl}/${product.id}`,
+      { headers: this.buildHeaders() })
+      .pipe(
+        map(response => {
+          this.notifyUpdate(product);
+          return this.success();
+        }),
+        catchError(this.handleOperationError('UpdateProduct'))
+      );
+  }
+
   success = (): SimpleOperationResult => {
     return { type: 'success' };
   }

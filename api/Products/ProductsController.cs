@@ -41,6 +41,15 @@ namespace header_navigation.Products
             return Ok();
         }
 
+        [HttpDelete("{id}", Name = "DeleteProduct")]
+        public ActionResult Delete(int id)
+        {
+            if (id == 0)
+                return BadRequest();
+            Products.Delete(id);
+            return Ok();
+        }
+
         private bool CheckDuplicate(string productName)
         {
             return Products.GetAll().Any(p => p.Name.Equals(productName, StringComparison.InvariantCultureIgnoreCase));
