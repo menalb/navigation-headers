@@ -1,3 +1,35 @@
-<div class="card-body">
-    <h5 class="card-title">{{product.name}}</h5>
+<div
+    class="card-body"
+    (click)="boxClick($event)"
+>
+    {{isEditMode}}
+    <h5
+        class="card-title"
+        [hidden]="isEditMode"
+    >
+        {{product.name}}
+    </h5>
+    <div [hidden]="!isEditMode">
+        <form [formGroup]="productForm">
+            Name:
+            <input
+                type="text"
+                formControlName="name"
+            >
+        </form>
+        <div class="d-flex justify-content-around">
+            <button
+                class="btn btn-primary"
+                (click)="cancel($event)"
+            >
+                Cancel
+            </button>
+            <button
+                class="btn btn-primary"
+                (click)="save($event)"
+            >
+                Save
+            </button>
+        </div>
+    </div>
 </div>
