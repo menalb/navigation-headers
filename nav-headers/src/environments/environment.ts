@@ -6,7 +6,7 @@ export const environment = {
   production: false,
   baseUrl: 'https://localhost:5001',
   endpoint: '/api/products',
-  productsUrl: 'https://localhost:5001/api/products?page=1&pageSize=100'
+  productsUrl: 'https://localhost:5001/api/products'
 };
 
 /*

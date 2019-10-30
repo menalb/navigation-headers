@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 
-import { SimpleProductService } from './simple-product.service';
+import { SimpleProductService, SimpleOperationResult } from './simple-product.service';
 import { Product } from '../product.model';
 import { FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
 
@@ -13,6 +13,9 @@ export class SimpleProductBoxComponent implements OnInit {
   @Input() product: Product;
   isEditMode = false;
   productForm: FormGroup;
+  errorMessage = '';
+  defaultErrorMessage = 'Invalid Product name';
+
   constructor(private formBuilder: FormBuilder, private productService: SimpleProductService) {
   }
 
@@ -32,11 +35,21 @@ export class SimpleProductBoxComponent implements OnInit {
     }
   }
   save(ev) {
-    this.isEditMode = false;
     ev.stopPropagation();
+    const updatedProduct = { ...this.product, name: this.productForm.value.name };
+    this.productService.update(updatedProduct).subscribe(response => {
+      this.handleEditResponse(response);
+    });
   }
   cancel(ev) {
     this.isEditMode = false;
     ev.stopPropagation();
+  }
+
+  handleEditResponse(response: SimpleOperationResult): void {
+    this.isEditMode = (response.type !== 'success');
+    if (response.type === 'failure') {
+      this.errorMessage = response.errorMessage;
+    }
   }
 }

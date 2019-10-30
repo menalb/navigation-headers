@@ -29,7 +29,7 @@ export class SimpleProductService {
 
   get(): Observable<Product[]> {
     return this.http
-      .get<Product[]>(environment.productsUrl, {
+      .get<Product[]>(environment.productsUrl + '?page=1&pageSize=100', {
         observe: 'response',
         headers: this.buildHeaders()
       })
@@ -49,6 +49,21 @@ export class SimpleProductService {
           return this.success();
         }),
         catchError(this.handleOperationError('AddProduct'))
+      );
+  }
+
+
+  update(product: Product): Observable<SimpleOperationResult> {
+    return this.http.put<Product>(
+      `${environment.productsUrl}/${product.id}`,
+      product,
+      { headers: this.buildHeaders() })
+      .pipe(
+        map(updatedProduct => {
+          this.notifyUpdate(updatedProduct);
+          return this.success();
+        }),
+        catchError(this.handleOperationError('UpdateProduct'))
       );
   }
 

@@ -2,7 +2,6 @@
     class="card-body"
     (click)="boxClick($event)"
 >
-    {{isEditMode}}
     <h5
         class="card-title"
         [hidden]="isEditMode"
@@ -17,6 +16,12 @@
                 formControlName="name"
             >
         </form>
+        <p
+            [hidden]="errorMessage.length === 0"
+            class="text-danger"
+        >
+            {{errorMessage}}
+        </p>
         <div class="d-flex justify-content-around">
             <button
                 class="btn btn-primary"
