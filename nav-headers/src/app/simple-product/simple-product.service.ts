@@ -1,15 +1,26 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { environment } from 'src/environments/environment';
-import { Product } from '../product.model';
+import { Product, AddProductCommand } from '../product.model';
+
+export interface SimpleOperationResult {
+  type: 'success' | 'failure';
+  errorMessage?: string;
+}
 
 @Injectable()
 export class SimpleProductService {
+  private updatedProduct = new Subject<Product>();
+  updatedProduct$ = this.updatedProduct.asObservable();
 
   constructor(private http: HttpClient) {
+  }
+
+  notifyUpdate(product: Product) {
+    this.updatedProduct.next(product);
   }
 
   buildHeaders() {
@@ -25,6 +36,39 @@ export class SimpleProductService {
       .pipe(map(resp => resp.body),
         catchError(this.handleError<Product[]>('GetProducts'))
       );
+  }
+
+  add(product: Product): Observable<SimpleOperationResult> {
+    return this.http.post<Product>(
+      environment.productsUrl,
+      product,
+      { headers: this.buildHeaders() })
+      .pipe(
+        map(addedProduct => {
+          this.notifyUpdate(addedProduct);
+          return this.success();
+        }),
+        catchError(this.handleOperationError('AddProduct'))
+      );
+  }
+
+  success = (): SimpleOperationResult => {
+    return { type: 'success' };
+  }
+
+  private handleOperationError(operation = 'operation'): (error: any) => Observable<SimpleOperationResult> {
+    return (error: any): Observable<SimpleOperationResult> => {
+      console.error(`${operation} failed: ${error}`);
+      return of(this.buildResult(error));
+    };
+  }
+
+  private buildResult(error: any): SimpleOperationResult {
+    switch (error.status) {
+      case 400: return { type: 'failure', errorMessage: 'Invalid Data' };
+      case 409: return { type: 'failure', errorMessage: 'Data already in the store' };
+    }
+    return { type: 'failure' };
   }
 
   private handleError<T>(operation = 'operation', result?: T) {

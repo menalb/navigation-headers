@@ -4,8 +4,6 @@
         style="width: 18rem;"
         *ngFor="let product of products"
     >
-        <div class="card-body">
-            <h5 class="card-title">{{product.name}}</h5>
-        </div>
+        <app-simple-product-box [product]="product"></app-simple-product-box>
     </div>
 </div>

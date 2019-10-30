@@ -1,5 +1,5 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 
 import { SimpleProductService } from './simple-product.service';
 import { Product } from '../product.model';
@@ -9,11 +9,21 @@ import { Product } from '../product.model';
   templateUrl: 'simple-product-list.component.html'
 })
 export class SimpleProductListComponent implements OnInit {
+  subscriptionUpdate: Subscription;
   products: Product[];
 
-  constructor(private productService: SimpleProductService) { }
+  constructor(private productService: SimpleProductService) {
+    this.subscriptionUpdate =
+      this.productService
+        .updatedProduct$
+        .subscribe((product: Product) => this.loadProductList());
+  }
 
   ngOnInit() {
+    this.loadProductList();
+  }
+
+  loadProductList() {
     this.productService.get().subscribe(prods => this.products = prods);
   }
 }
