@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Observable, of, Subject } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
@@ -33,9 +33,16 @@ export class SimpleProductService {
         observe: 'response',
         headers: this.buildHeaders()
       })
-      .pipe(map(resp => resp.body),
+      .pipe(
+        map(resp => resp.body),
         catchError(this.handleError<Product[]>('GetProducts'))
       );
+  }
+  private handleError<T>(operation = 'operation', result?: T) {
+    return (error: any): Observable<T> => {
+      console.error(operation, error);
+      return of(result as T);
+    };
   }
 
   add(product: Product): Observable<SimpleOperationResult> {
@@ -69,14 +76,15 @@ export class SimpleProductService {
 
   delete(product: Product): Observable<SimpleOperationResult> {
     return this.http.delete(
-      `${environment.productsUrl}/${product.id}`,
+      // `${environment.productsUrl}/${product.id}`,
+      environment.productsUrl + '/' + product.id,
       { headers: this.buildHeaders() })
       .pipe(
         map(response => {
           this.notifyUpdate(product);
           return this.success();
         }),
-        catchError(this.handleOperationError('UpdateProduct'))
+        catchError(this.handleOperationError('DeleteProduct'))
       );
   }
 
@@ -99,10 +107,5 @@ export class SimpleProductService {
     return { type: 'failure' };
   }
 
-  private handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-      console.error(operation, error);
-      return of(result as T);
-    };
-  }
+
 }
