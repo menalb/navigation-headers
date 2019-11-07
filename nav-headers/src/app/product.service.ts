@@ -1,13 +1,18 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { Product, ApiConfig, AddProductCommand } from './product.model';
 import { environment } from 'src/environments/environment';
 
-export interface OperationResult {
-  type: 'success' | 'failure';
-  code?: 'invalid' | 'duplicate' | 'ok' | 'ko';
+export interface SuccessOperationResult {
+  type: 'success';
+  code: 'ok' | 'created';
+}
+
+export interface FailureOperationResult {
+  type: 'failure';
+  code: 'invalid' | 'duplicate'  | 'ko';
   message?: string;
 }
 
@@ -27,7 +32,7 @@ export class ProductService {
     return new HttpHeaders({ 'Content-Type': 'application/json' });
   }
 
-  add(product: AddProductCommand): Observable<OperationResult> {
+  add(product: AddProductCommand): Observable<SuccessOperationResult | FailureOperationResult> {
     return this.http.post<Product>(this.config.baseUrl + this.config.endpoint, product, { headers: this.buildHeaders() })
       .pipe(
         map(_ => this.success()),
@@ -35,19 +40,19 @@ export class ProductService {
       );
   }
 
-  private handleOperationError(operation = 'operation'): (error: any) => Observable<OperationResult> {
-    return (error: any): Observable<OperationResult> => {
+  private handleOperationError(operation = 'operation'): (error: any) => Observable<FailureOperationResult> {
+    return (error: any): Observable<FailureOperationResult> => {
 
-      return of(this.buildResult(operation, error));
+      return this.buildResult(operation, error);
     };
   }
 
-  private buildResult(operation: string, error: any): OperationResult {
+  private buildResult(operation: string, error: any): Observable<never> {
     switch (error.status) {
-      case 400: return { ...this.failure('failed'), code: 'invalid' };
-      case 409: return { ...this.failure('failed'), code: 'duplicate' };
+      case 400: return throwError({ ...this.failure('failed'), code: 'invalid' });
+      case 409: return throwError({ ...this.failure('failed'), code: 'duplicate' });
     }
-    return { ...this.failure(`${operation} failed`), code: 'ko' }
+    return throwError(error);
   }
 
   private handleError<T>(operation = 'operation', result?: T) {
@@ -57,11 +62,11 @@ export class ProductService {
     };
   }
 
-  success = (): OperationResult => {
+  success = (): SuccessOperationResult => {
     return { type: 'success', code: 'ok' };
   }
 
-  failure = (errorMessage: string): OperationResult => {
+  failure = (errorMessage: string): FailureOperationResult => {
     return { type: 'failure', message: errorMessage, code: 'ko' };
   }
 

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ProductService, OperationResult } from '../product.service';
+import { ProductService, FailureOperationResult } from '../product.service';
 import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
 import { Validators } from '@angular/forms';
 
@@ -29,15 +29,18 @@ export class ProductAddComponent {
     if (this.productForm.valid) {
       this.productService.add({
         name: this.productForm.value.name
-      }).subscribe(_ => this.handleAddresponse(_));
+      }).subscribe(
+        _ => this.isAddMode = false,
+        error => this.handleAddresponse(error)
+      );
     } else {
       this.errorMessage = this.defaultErrorMessage;
     }
   }
 
-  handleAddresponse(response: OperationResult): void {
+  handleAddresponse(response: FailureOperationResult): void {
 
-    this.isAddMode = (response.type !== 'success');
+    this.isAddMode = true;
     if (response.code === 'duplicate') {
       this.errorMessage = 'Product already in the catalog';
     }
