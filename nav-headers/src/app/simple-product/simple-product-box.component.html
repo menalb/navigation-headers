@@ -1,0 +1,46 @@
+<div
+    class="card-body"
+    (click)="boxClick($event)"
+>
+    <h5
+        class="card-title"
+        [hidden]="isEditMode"
+    >
+        {{product.name}}
+    </h5>
+    <div [hidden]="!isEditMode">
+        <form [formGroup]="productForm">
+            Name:
+            <input
+                type="text"
+                formControlName="name"
+            >
+        </form>
+        <p
+            [hidden]="errorMessage.length === 0"
+            class="text-danger"
+        >
+            {{errorMessage}}
+        </p>
+        <div class="d-flex justify-content-around">
+            <button
+                class="btn btn-primary"
+                (click)="cancel($event)"
+            >
+                Cancel
+            </button>
+            <button
+                class="btn btn-primary"
+                (click)="save($event)"
+            >
+                Save
+            </button>
+            <button
+                class="btn btn-danger"
+                (click)="delete($event)"
+            >
+                Delete
+            </button>
+        </div>
+    </div>
+</div>

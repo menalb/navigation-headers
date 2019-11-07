@@ -16,7 +16,7 @@ namespace header_navigation.Products
         private static IList<Product> products;
         public static IEnumerable<Product> GetAll()
         {
-            return products.OrderBy(p=>p.Name);
+            return products.OrderBy(p => p.Name);
         }
 
         public static void Add(Product product)
@@ -25,13 +25,25 @@ namespace header_navigation.Products
             product.Code = $"P{product.Id.ToString("0000")}";
             products.Add(product);
         }
+
+        public static void Update(int id, Product product)
+        {
+            var prod = products.Single(p => p.Id == id);
+            prod.Name = product.Name;
+        }
+
+        public static void Delete(int id)
+        {
+            var prod = products.Single(p => p.Id == id);
+            products.Remove(prod);
+        }
         public static void InitProducts()
         {
             products = pastas.Select((p, i) => new Product
             {
-                Id = i,
+                Id = i+1,
                 Name = p,
-                Code = $"P{i.ToString("0000")}"
+                Code = $"P{(i+1).ToString("0000")}"
             }).ToList();
         }
 

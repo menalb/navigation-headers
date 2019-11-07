@@ -2,19 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { Product, ApiConfig, AddProductCommand } from './product.model';
+import { Product, ApiConfig, AddProductCommand, FailureOperationResult, SuccessOperationResult } from './product.model';
 import { environment } from 'src/environments/environment';
-
-export interface SuccessOperationResult {
-  type: 'success';
-  code: 'ok' | 'created';
-}
-
-export interface FailureOperationResult {
-  type: 'failure';
-  code: 'invalid' | 'duplicate'  | 'ko';
-  message?: string;
-}
 
 @Injectable()
 export class ProductService {

@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
-import { ProductService, FailureOperationResult } from '../product.service';
 import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
 import { Validators } from '@angular/forms';
+import { SimpleProductService } from '../simple-product/simple-product.service';
+import { Product, FailureOperationResult } from '../product.model';
 
 @Component({
   selector: 'app-product-add',
@@ -13,7 +14,7 @@ export class ProductAddComponent {
   errorMessage = '';
   defaultErrorMessage = 'Invalid Product name';
 
-  constructor(private formBuilder: FormBuilder, private productService: ProductService) {
+  constructor(private formBuilder: FormBuilder, private productService: SimpleProductService) {
 
     this.productForm = this.formBuilder.group({
       name: new FormControl('', Validators.required)
@@ -27,11 +28,16 @@ export class ProductAddComponent {
 
   add(ev): void {
     if (this.productForm.valid) {
-      this.productService.add({
+
+      const product: Product = {
+        id: 0,
+        code: '',
         name: this.productForm.value.name
-      }).subscribe(
-        _ => this.isAddMode = false,
-        error => this.handleAddresponse(error)
+      };
+
+      this.productService.add(product).subscribe(
+        _ => this.isAddMode = false, // success
+        error => this.handleAddresponse(error) // failure
       );
     } else {
       this.errorMessage = this.defaultErrorMessage;
@@ -41,12 +47,17 @@ export class ProductAddComponent {
   handleAddresponse(response: FailureOperationResult): void {
 
     this.isAddMode = true;
-    if (response.code === 'duplicate') {
-      this.errorMessage = 'Product already in the catalog';
+    switch (response.code) {
+      case 'duplicate':
+        this.errorMessage = 'Product already in the catalog';
+        break;
+      case 'invalid':
+        this.errorMessage = this.defaultErrorMessage;
+        break;
+      default:
+        this.errorMessage = 'Problems with the API';
     }
-    if (response.code === 'invalid') {
-      this.errorMessage = this.defaultErrorMessage;
-    }
+
   }
 
   cancel(): void {
