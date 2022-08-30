@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace header_navigation
@@ -37,7 +38,7 @@ namespace header_navigation
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info { Title = "Products API", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Products API", Version = "v1" });
             });
         }
 
